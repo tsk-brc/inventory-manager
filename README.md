@@ -1,43 +1,43 @@
 # Inventory Manager
 
-A warehouse inventory management system built with Ruby on Rails.
-Track products across multiple warehouses, record inbound/outbound stock movements, and monitor low-stock items in real time.
+Ruby on Rails で構築した倉庫在庫管理システムです。
+複数倉庫にまたがる商品の在庫を管理し、入出庫の記録と在庫数の自動更新を行います。
 
-Built with service objects, DB-level constraints, transactional data integrity, and full test coverage.
+サービス層でのトランザクション管理、DB レベルの整合性制約、RSpec によるテスト整備を意識して実装しています。
 
-## Features
+## 機能
 
-- **Authentication** — Devise-based user authentication
-- **Product Management** — CRUD with SKU tracking and minimum stock thresholds
-- **Warehouse Management** — Multiple warehouse support
-- **Stock Movements** — Inbound/outbound recording with transactional inventory updates
-- **Dashboard** — Low-stock alerts and recent activity at a glance
-- **Inventory View** — Per-warehouse stock visibility with status indicators
+- **認証** — Devise によるユーザー認証
+- **商品管理** — SKU・最低在庫数つきの CRUD
+- **倉庫管理** — 複数倉庫の登録・管理
+- **入出庫記録** — 入庫・出庫の記録とトランザクションによる在庫更新
+- **ダッシュボード** — 低在庫アラートと直近の入出庫履歴
+- **在庫一覧** — 倉庫別の在庫状況とステータス表示
 
-## Tech Stack
+## 技術スタック
 
-| Category | Technology |
-|----------|-----------|
-| Language | Ruby 3.3 |
-| Framework | Rails 8.1 |
-| Database | PostgreSQL 14+ |
-| Authentication | Devise |
+| 分類 | 技術 |
+|------|------|
+| 言語 | Ruby 3.3 |
+| フレームワーク | Rails 8.1 |
+| データベース | PostgreSQL 14+ |
+| 認証 | Devise |
 | UI | Bootstrap 5, Hotwire (Turbo / Stimulus) |
-| Pagination | Kaminari |
-| Testing | RSpec, FactoryBot, Shoulda Matchers |
-| Linting | RuboCop (rubocop-rails, rubocop-rspec) |
-| Security | Brakeman, bundler-audit |
+| ページネーション | Kaminari |
+| テスト | RSpec, FactoryBot, Shoulda Matchers |
+| 静的解析 | RuboCop (rubocop-rails, rubocop-rspec) |
+| セキュリティ | Brakeman, bundler-audit |
 | CI | GitHub Actions |
 
-## Getting Started
+## セットアップ
 
-### Prerequisites
+### 前提条件
 
-- Ruby 3.3.x ([rbenv](https://github.com/rbenv/rbenv) or [asdf](https://asdf-vm.com/) recommended)
-- PostgreSQL 14+ (running on localhost)
-- Bundler (`gem install bundler`)
+- Ruby 3.3.x（[rbenv](https://github.com/rbenv/rbenv) または [asdf](https://asdf-vm.com/) を推奨）
+- PostgreSQL 14+（localhost で起動済み）
+- Bundler（`gem install bundler`）
 
-### Setup
+### インストール
 
 ```bash
 git clone https://github.com/tsk-brc/inventory-manager.git
@@ -45,50 +45,50 @@ cd inventory-manager
 bin/setup
 ```
 
-`bin/setup` will install dependencies, create the database, run migrations, and load seed data.
+`bin/setup` で依存関係のインストール、DB 作成、マイグレーション、seed データの投入まで完了します。
 
-Alternatively, if you prefer manual steps:
+手動で実行する場合:
 
 ```bash
 bundle install
 bin/rails db:setup
 ```
 
-### Start the server
+### サーバー起動
 
 ```bash
 bin/rails server
 ```
 
-Open http://localhost:3000 and sign in with the seed account:
+http://localhost:3000 を開き、seed アカウントでログインできます。
 
 | | |
 |---|---|
 | Email | `admin@example.com` |
 | Password | `password` |
 
-> This account is created by `db/seeds.rb` for local development. The seed data includes sample products, warehouses, and stock movement history.
+> このアカウントは `db/seeds.rb` で作成されるローカル開発用のデータです。商品・倉庫・入出庫履歴のサンプルデータも含まれています。
 
-## Testing
-
-```bash
-bundle exec rspec                              # Run all tests
-bundle exec rspec spec/models                  # Model specs
-bundle exec rspec spec/requests                # Request specs
-bundle exec rspec spec/services                # Service specs
-bundle exec rspec spec/models/product_spec.rb  # Single file
-```
-
-## Linting
+## テスト
 
 ```bash
-bundle exec rubocop       # Check
-bundle exec rubocop -A    # Auto-correct
+bundle exec rspec                              # 全テスト実行
+bundle exec rspec spec/models                  # モデルスペック
+bundle exec rspec spec/requests                # リクエストスペック
+bundle exec rspec spec/services                # サービススペック
+bundle exec rspec spec/models/product_spec.rb  # ファイル単位で実行
 ```
 
-## Architecture
+## 静的解析
 
-### Models
+```bash
+bundle exec rubocop       # チェック
+bundle exec rubocop -A    # 自動修正
+```
+
+## アーキテクチャ
+
+### モデル構成
 
 ```
 User
@@ -104,7 +104,7 @@ Warehouse
  ├── has_many :products (through :inventories)
  └── has_many :stock_movements
 
-Inventory (product × warehouse)
+Inventory（商品 × 倉庫）
  ├── belongs_to :product
  └── belongs_to :warehouse
      unique index on [product_id, warehouse_id]
@@ -116,33 +116,33 @@ StockMovement
      enum operation_type: { inbound, outbound }
 ```
 
-### Design Highlights
+### 設計上のポイント
 
-**Service layer for business logic**
+**サービス層によるビジネスロジックの分離**
 
-Stock movement creation and inventory update are handled by `StockMovementService` within a single database transaction. The controller delegates to the service and never manipulates inventory directly, keeping the write path predictable and testable.
+入出庫の記録と在庫数の更新は `StockMovementService` が単一のトランザクション内で処理します。コントローラは在庫を直接操作せず、書き込み経路をサービスに集約することでテストしやすい構成にしています。
 
-**Data integrity at the database level**
+**DB レベルでのデータ整合性**
 
-Application-level validations alone don't prevent race conditions or bypass scenarios. This project enforces constraints at the DB level as well:
+アプリケーションのバリデーションだけでは、並行アクセスやバリデーション迂回時にデータ不整合が起きる可能性があります。このプロジェクトでは DB レベルでも制約を設けています。
 
-- `CHECK (quantity >= 0)` on `inventories` — negative stock is impossible even under concurrent access
-- `CHECK (quantity > 0)` on `stock_movements` — zero-quantity movements are rejected
-- `UNIQUE (product_id, warehouse_id)` on `inventories` — one record per product-warehouse pair
-- `NOT NULL` and foreign keys on all required columns
+- `inventories` に `CHECK (quantity >= 0)` を設定 — 在庫数がマイナスになることを防止
+- `stock_movements` に `CHECK (quantity > 0)` を設定 — 数量ゼロの入出庫を拒否
+- `inventories` に `UNIQUE (product_id, warehouse_id)` を設定 — 商品と倉庫の組み合わせの重複を防止
+- 必須カラムに `NOT NULL` と外部キー制約を設定
 
-**Test structure**
+**テスト構成**
 
-61 examples across three layers, all passing:
+モデル・サービス・リクエストの 3 層で構成しています。
 
-- **Model specs** — associations, validations, scopes, and business logic (`Product.low_stock`, `#total_quantity`)
-- **Service specs** — inbound/outbound inventory updates, insufficient stock rejection, invalid parameter handling
-- **Request specs** — full CRUD lifecycle, authentication enforcement, error responses
+- **モデルスペック** — アソシエーション、バリデーション、スコープ、ビジネスロジック（`Product.low_stock`, `#total_quantity`）
+- **サービススペック** — 入庫・出庫による在庫更新、在庫不足時の拒否、不正パラメータの処理
+- **リクエストスペック** — CRUD の一連のライフサイクル、認証の強制、エラーレスポンス
 
-**CI pipeline**
+**CI**
 
-GitHub Actions runs RuboCop and Brakeman (static security analysis) in the lint job, and RSpec against a PostgreSQL service container in the test job. Both jobs must pass before merge.
+GitHub Actions で 2 ジョブを実行しています。lint ジョブで RuboCop と Brakeman（静的セキュリティ解析）を、test ジョブで PostgreSQL サービスコンテナに対して RSpec を実行します。
 
-## License
+## ライセンス
 
 [MIT](LICENSE)
