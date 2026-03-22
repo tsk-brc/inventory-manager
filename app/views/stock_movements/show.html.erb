@@ -1,0 +1,24 @@
+<h1 class="mb-4">Stock Movement Detail</h1>
+
+<dl class="row">
+  <dt class="col-sm-3">Date</dt>
+  <dd class="col-sm-9"><%= @stock_movement.created_at.strftime("%Y-%m-%d %H:%M:%S") %></dd>
+  <dt class="col-sm-3">Type</dt>
+  <dd class="col-sm-9">
+    <span class="badge bg-<%= @stock_movement.inbound? ? 'success' : 'danger' %>">
+      <%= @stock_movement.operation_type %>
+    </span>
+  </dd>
+  <dt class="col-sm-3">Product</dt>
+  <dd class="col-sm-9"><%= link_to @stock_movement.product.name, @stock_movement.product %></dd>
+  <dt class="col-sm-3">Warehouse</dt>
+  <dd class="col-sm-9"><%= link_to @stock_movement.warehouse.name, @stock_movement.warehouse %></dd>
+  <dt class="col-sm-3">Quantity</dt>
+  <dd class="col-sm-9"><%= @stock_movement.quantity %></dd>
+  <dt class="col-sm-3">Reason</dt>
+  <dd class="col-sm-9"><%= @stock_movement.reason.presence || "—" %></dd>
+  <dt class="col-sm-3">Recorded by</dt>
+  <dd class="col-sm-9"><%= @stock_movement.user.email %></dd>
+</dl>
+
+<%= link_to "Back to Movements", stock_movements_path, class: "btn btn-outline-secondary" %>

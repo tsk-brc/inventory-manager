@@ -1,0 +1,14 @@
+<h1 class="mb-4">Inventory Detail</h1>
+
+<dl class="row">
+  <dt class="col-sm-3">Product</dt>
+  <dd class="col-sm-9"><%= link_to @inventory.product.name, @inventory.product %></dd>
+  <dt class="col-sm-3">SKU</dt>
+  <dd class="col-sm-9"><code><%= @inventory.product.sku %></code></dd>
+  <dt class="col-sm-3">Warehouse</dt>
+  <dd class="col-sm-9"><%= link_to @inventory.warehouse.name, @inventory.warehouse %></dd>
+  <dt class="col-sm-3">Quantity</dt>
+  <dd class="col-sm-9"><%= @inventory.quantity %></dd>
+</dl>
+
+<%= link_to "Back to Inventory", inventories_path, class: "btn btn-outline-secondary" %>

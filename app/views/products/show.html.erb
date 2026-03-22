@@ -1,0 +1,77 @@
+<div class="d-flex justify-content-between align-items-center mb-4">
+  <h1><%= @product.name %></h1>
+  <div class="d-flex gap-2">
+    <%= link_to "Edit", edit_product_path(@product), class: "btn btn-outline-secondary" %>
+    <%= button_to "Delete", @product, method: :delete, class: "btn btn-outline-danger",
+        data: { turbo_confirm: "Are you sure?" } %>
+  </div>
+</div>
+
+<div class="row mb-4">
+  <div class="col-md-6">
+    <dl class="row">
+      <dt class="col-sm-4">SKU</dt>
+      <dd class="col-sm-8"><code><%= @product.sku %></code></dd>
+      <dt class="col-sm-4">Description</dt>
+      <dd class="col-sm-8"><%= @product.description.presence || "—" %></dd>
+      <dt class="col-sm-4">Minimum Qty</dt>
+      <dd class="col-sm-8"><%= @product.minimum_quantity %></dd>
+      <dt class="col-sm-4">Total Stock</dt>
+      <dd class="col-sm-8">
+        <span class="<%= 'text-danger fw-bold' if @product.low_stock? %>">
+          <%= @product.total_quantity %>
+        </span>
+      </dd>
+    </dl>
+  </div>
+</div>
+
+<% if @inventories.any? %>
+  <h4>Inventory by Warehouse</h4>
+  <table class="table table-sm table-striped mb-4">
+    <thead>
+      <tr>
+        <th>Warehouse</th>
+        <th class="text-end">Quantity</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @inventories.each do |inventory| %>
+        <tr>
+          <td><%= link_to inventory.warehouse.name, inventory.warehouse %></td>
+          <td class="text-end"><%= inventory.quantity %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% if @recent_movements.any? %>
+  <h4>Recent Movements</h4>
+  <table class="table table-sm table-striped">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Type</th>
+        <th>Warehouse</th>
+        <th class="text-end">Quantity</th>
+        <th>By</th>
+      </tr>
+    </thead>
+    <tbody>
+      <% @recent_movements.each do |movement| %>
+        <tr>
+          <td><%= movement.created_at.strftime("%Y-%m-%d %H:%M") %></td>
+          <td>
+            <span class="badge bg-<%= movement.inbound? ? 'success' : 'danger' %>">
+              <%= movement.operation_type %>
+            </span>
+          </td>
+          <td><%= movement.warehouse.name %></td>
+          <td class="text-end"><%= movement.quantity %></td>
+          <td><%= movement.user.email %></td>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>

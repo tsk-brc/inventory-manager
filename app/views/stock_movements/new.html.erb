@@ -1,0 +1,36 @@
+<h1 class="mb-4">New Stock Movement</h1>
+
+<%= form_with(model: @stock_movement, class: "mb-3") do |f| %>
+  <div class="mb-3">
+    <%= f.label :operation_type, class: "form-label" %>
+    <%= f.select :operation_type, StockMovement.operation_types.keys.map { |k| [k.titleize, k] },
+        { prompt: "Select type" }, class: "form-select", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :product_id, "Product", class: "form-label" %>
+    <%= f.collection_select :product_id, Product.ordered, :id, :name,
+        { prompt: "Select product" }, class: "form-select", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :warehouse_id, "Warehouse", class: "form-label" %>
+    <%= f.collection_select :warehouse_id, Warehouse.ordered, :id, :name,
+        { prompt: "Select warehouse" }, class: "form-select", required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :quantity, class: "form-label" %>
+    <%= f.number_field :quantity, class: "form-control", min: 1, required: true %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :reason, class: "form-label" %>
+    <%= f.text_field :reason, class: "form-control" %>
+  </div>
+
+  <div class="d-flex gap-2">
+    <%= f.submit "Record Movement", class: "btn btn-primary" %>
+    <%= link_to "Cancel", stock_movements_path, class: "btn btn-outline-secondary" %>
+  </div>
+<% end %>
