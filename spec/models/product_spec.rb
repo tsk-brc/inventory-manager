@@ -59,12 +59,12 @@ RSpec.describe Product do
       adequate = create(:product, minimum_quantity: 5)
       create(:inventory, product: adequate, quantity: 50)
 
-      expect(described_class.low_stock).to contain_exactly(low)
+      expect(described_class.low_stock.where(id: [low.id, adequate.id])).to contain_exactly(low)
     end
 
     it 'includes products with no inventory' do
       no_stock = create(:product, minimum_quantity: 1)
-      expect(described_class.low_stock).to include(no_stock)
+      expect(described_class.low_stock.where(id: no_stock.id)).to include(no_stock)
     end
   end
 end

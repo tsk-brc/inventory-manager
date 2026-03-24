@@ -20,7 +20,7 @@ RSpec.describe StockMovement do
       old = create(:stock_movement, created_at: 1.day.ago)
       recent = create(:stock_movement, created_at: Time.current)
 
-      expect(described_class.recent).to eq([recent, old])
+      expect(described_class.where(id: [recent.id, old.id]).recent.to_a).to eq([recent, old])
     end
   end
 end
