@@ -23,7 +23,7 @@ RSpec.describe Inventory do
       low = create(:inventory, product: product, quantity: 10)
       create(:inventory, product: product, quantity: 50)
 
-      expect(described_class.low_stock).to contain_exactly(low)
+      expect(described_class.low_stock.where(product: product)).to contain_exactly(low)
     end
   end
 end
