@@ -2,7 +2,7 @@ source 'https://rubygems.org'
 
 gem 'bootsnap', require: false
 gem 'importmap-rails'
-gem 'pg', '~> 1.1'
+gem 'pg', '~> 1.7'
 gem 'propshaft'
 gem 'puma', '>= 5.0'
 gem 'rails', '~> 8.1.2'
